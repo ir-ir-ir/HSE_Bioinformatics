@@ -16,3 +16,16 @@ seqtk sample -s729 oil_R2.fastq 5000000 > sub2.fastq
 seqtk sample -s729 oilMP_S4_L001_R1_001.fastq 1500000 > mp1.fastq
 seqtk sample -s729 oilMP_S4_L001_R2_001.fastq 1500000 > mp2.fastq
 ```
+3. Анализ с помощью fastqc
+```
+mkdir fastqc
+fastqc -o fastqc sub1.fastq
+fastqc -o fastqc sub2.fastq
+fastqc -o fastqc mp1.fastq
+fastqc -o fastqc mp2.fastq
+```
+4. Анализ с помощью multiqc
+```
+mkdir multiqc
+multiqc -o multiqc fastqc
+```
