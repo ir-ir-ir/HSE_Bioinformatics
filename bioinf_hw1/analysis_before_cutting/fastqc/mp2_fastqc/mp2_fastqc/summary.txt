@@ -1,0 +1,11 @@
+PASS	Basic Statistics	mp2.fastq
+FAIL	Per base sequence quality	mp2.fastq
+PASS	Per tile sequence quality	mp2.fastq
+PASS	Per sequence quality scores	mp2.fastq
+PASS	Per base sequence content	mp2.fastq
+PASS	Per sequence GC content	mp2.fastq
+PASS	Per base N content	mp2.fastq
+PASS	Sequence Length Distribution	mp2.fastq
+PASS	Sequence Duplication Levels	mp2.fastq
+PASS	Overrepresented sequences	mp2.fastq
+FAIL	Adapter Content	mp2.fastq
