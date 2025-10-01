@@ -30,5 +30,8 @@ mkdir multiqc
 multiqc -o multiqc fastqc
 ```
 5. Итоговые файлы находятся в bioinf_hw1/analusis_before_сutting
+   
 *Рассмотрим результаты работы fastqc и multiqc:*
+
+
 
