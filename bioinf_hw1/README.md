@@ -107,6 +107,42 @@ multiqc -o multiqc_trimmed fastqc_trimmed
 ```
 9. **Рассмотрим результаты работы fastqc и multiqc:**
 
+<img width="1456" height="298" alt="image" src="https://github.com/user-attachments/assets/c70dbbac-3e0f-47c2-9c74-d02d985f07f9" />
+
+Теперь график с распределением качества чтений по длине показывает хорошие результаты, score везде > 30:
+
+<img width="1425" height="732" alt="image" src="https://github.com/user-attachments/assets/a2bdb826-2437-4fab-9acc-b8b902325bd0" />
+
+sub1:
+
+<img width="1011" height="746" alt="image" src="https://github.com/user-attachments/assets/d29a65fe-cdcf-4529-93fd-5af769992eac" />
+
+sub2:
+
+<img width="1020" height="746" alt="image" src="https://github.com/user-attachments/assets/e4305bfc-675a-4743-8c13-aeeb898f60f6" />
+
+mp1:
+
+<img width="1073" height="755" alt="image" src="https://github.com/user-attachments/assets/665d0916-488b-4bb6-82bf-e7fc3fd8891d" />
+
+mp2:
+
+<img width="1077" height="755" alt="image" src="https://github.com/user-attachments/assets/3afd80af-a2e3-43cd-af0d-39410da98444" />
+
+Адаптеры теперь отсутствуют:
+
+mp1:
+
+<img width="1070" height="746" alt="image" src="https://github.com/user-attachments/assets/0f4a80c0-ec26-4e52-b4dc-cae639a10dd3" />
+
+mp2:
+
+<img width="1067" height="747" alt="image" src="https://github.com/user-attachments/assets/780ba00a-08b2-4fb4-8ba1-d224fb5c28ca" />
+
+Status:
+
+<img width="1437" height="761" alt="image" src="https://github.com/user-attachments/assets/77f0e386-4c04-4c97-97ef-2e290a7d718d" />
+
 
 
 
