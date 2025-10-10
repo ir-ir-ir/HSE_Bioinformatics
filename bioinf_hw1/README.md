@@ -31,7 +31,60 @@ multiqc -o multiqc fastqc
 ```
 5. Итоговые файлы находятся в bioinf_hw1/analusis_before_сutting
    
-*Рассмотрим результаты работы fastqc и multiqc:*
+**Рассмотрим результаты работы fastqc и multiqc:**
+
+<img width="1435" height="311" alt="image" src="https://github.com/user-attachments/assets/6f30ae5f-f900-4780-9213-ecc91ffdbe9f" />
+
+mp1, mp2: длинные риды (251 bp), низкий уровень дубликатов (~4%), GC-состав 44%.
+
+sub1, sub2: короткие риды (101 bp), высокий уровень дубликатов (~30%), GC-состав 46%.
+
+<img width="1438" height="756" alt="image" src="https://github.com/user-attachments/assets/bf5a5500-f3ce-4b59-918e-95f559679e7f" />
+
+У MP-чтений качество хуже чем у PE чтений (на концах особенно)
+
+mp1:
+
+<img width="1073" height="725" alt="image" src="https://github.com/user-attachments/assets/4f2e917a-f2e2-4673-8c6b-d1d5fef909c4" />
+
+mp2:
+
+<img width="1082" height="756" alt="image" src="https://github.com/user-attachments/assets/27e7a924-ed02-42ec-932a-c7a2df98e14d" />
+
+sub1:
+
+<img width="1017" height="738" alt="image" src="https://github.com/user-attachments/assets/f44f8488-131e-404d-84ca-11b473566a7e" />
+
+sub2:
+
+<img width="1020" height="743" alt="image" src="https://github.com/user-attachments/assets/446d24cb-724b-4d81-a1af-e29752f096c5" />
+
+Адаптеры найлены на mp1 и mp2:
+
+<img width="1435" height="728" alt="image" src="https://github.com/user-attachments/assets/02acd184-0b5d-4e69-82a8-18b471a41ec4" />
+
+Адаптеры на mp1:
+
+<img width="1071" height="741" alt="image" src="https://github.com/user-attachments/assets/5369425e-ec28-45fc-abcf-10d8c8304d95" />
+
+Адаптеры на mp2:
+
+<img width="1050" height="752" alt="image" src="https://github.com/user-attachments/assets/4c4b4f0c-6621-4841-824b-a6133d7f9989" />
+
+Дупликаты: график также демонстрирует, что у PE чтений больше дупликатов
+
+<img width="1428" height="726" alt="image" src="https://github.com/user-attachments/assets/e077c2fa-4de2-4a01-b8a2-6b37d8452769" />
+
+Status:
+
+<img width="1423" height="782" alt="image" src="https://github.com/user-attachments/assets/34d36893-28b7-45ad-821f-7de538a04d04" />
+
+
+
+
+
+
+
 
 
 
