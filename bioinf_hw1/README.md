@@ -2,16 +2,16 @@
 
 1. Создала папку bioinf_hw1 и создала символические ссылки на файлы
 ```
-mkdir bioinf_hw1
-cd bioinf_hw1
-ln -s /usr/share/data-minor-bioinf/assembly/oil_R1.fastq
+mkdir bioinf_hw1 #создание папки
+cd bioinf_hw1 #переход в папку
+ln -s /usr/share/data-minor-bioinf/assembly/oil_R1.fastq #создание символической ссылки
 ln -s /usr/share/data-minor-bioinf/assembly/oil_R2.fastq
 ln -s /usr/share/data-minor-bioinf/assembly/oilMP_S4_L001_R1_001.fastq
 ln -s /usr/share/data-minor-bioinf/assembly/oilMP_S4_L001_R2_001.fastq
 ```
 2. Случайным образом выбрала для paired-end 5 миллионов чтений и для mate-pairs 1.5 миллиона чтений (seed = 729)
 ```
-seqtk sample -s729 oil_R1.fastq 5000000 > sub1.fastq
+seqtk sample -s729 oil_R1.fastq 5000000 > sub1.fastq # перенаправляю в файл sub1.fastq
 seqtk sample -s729 oil_R2.fastq 5000000 > sub2.fastq
 seqtk sample -s729 oilMP_S4_L001_R1_001.fastq 1500000 > mp1.fastq
 seqtk sample -s729 oilMP_S4_L001_R2_001.fastq 1500000 > mp2.fastq
@@ -19,7 +19,7 @@ seqtk sample -s729 oilMP_S4_L001_R2_001.fastq 1500000 > mp2.fastq
 3. Анализ с помощью fastqc
 ```
 mkdir fastqc
-fastqc -o fastqc sub1.fastq
+fastqc -o fastqc sub1.fastq # запускаю fastqc, -o указывает папку для сохранения результатов
 fastqc -o fastqc sub2.fastq
 fastqc -o fastqc mp1.fastq
 fastqc -o fastqc mp2.fastq
@@ -27,7 +27,7 @@ fastqc -o fastqc mp2.fastq
 4. Анализ с помощью multiqc
 ```
 mkdir multiqc
-multiqc -o multiqc fastqc
+multiqc -o multiqc fastqc 
 ```
 5. **Рассмотрим результаты работы fastqc и multiqc:**
 
@@ -142,6 +142,21 @@ mp2:
 Status:
 
 <img width="1437" height="761" alt="image" src="https://github.com/user-attachments/assets/77f0e386-4c04-4c97-97ef-2e290a7d718d" />
+
+10. С помощью platanus assemble собираю контиги из подрезанных чтений (PE чтения)
+```
+# -o: выходные файлы получат префикс Contigi
+# -f: указывает, что следующие аргументы - файлы для сборки
+# 2> assemble.log: перенаправляет ошибки, служебные сообщения, предупреждения в файл assemble.log
+platanus assemble -o Contigi -f sub1.fastq.trimmed sub2.fastq.trimmed 2> assemble.log
+```
+
+11. Код для анализа контигов:
+
+12. С помощью программы “ platanus scaffold” собираю скаффолды из контигов, а также из подрезанных чтений:
+    
+
+
 
 
 
