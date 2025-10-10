@@ -29,9 +29,7 @@ fastqc -o fastqc mp2.fastq
 mkdir multiqc
 multiqc -o multiqc fastqc
 ```
-5. Итоговые файлы находятся в bioinf_hw1/analusis_before_сutting
-   
-**Рассмотрим результаты работы fastqc и multiqc:**
+5. **Рассмотрим результаты работы fastqc и multiqc:**
 
 <img width="1435" height="311" alt="image" src="https://github.com/user-attachments/assets/6f30ae5f-f900-4780-9213-ecc91ffdbe9f" />
 
@@ -71,13 +69,46 @@ sub2:
 
 <img width="1050" height="752" alt="image" src="https://github.com/user-attachments/assets/4c4b4f0c-6621-4841-824b-a6133d7f9989" />
 
-Дупликаты: график также демонстрирует, что у PE чтений больше дупликатов
+Дупликаты: графики также демонстрируют, что у PE чтений больше дупликатов
+
+<img width="1431" height="774" alt="image" src="https://github.com/user-attachments/assets/044e09ba-9ccf-4f68-8f26-b01be0c863c3" />
 
 <img width="1428" height="726" alt="image" src="https://github.com/user-attachments/assets/e077c2fa-4de2-4a01-b8a2-6b37d8452769" />
 
-Status:
+Status: качество PE чтений, в целом, лучше
 
 <img width="1423" height="782" alt="image" src="https://github.com/user-attachments/assets/34d36893-28b7-45ad-821f-7de538a04d04" />
+
+6. Подрезала чтения и удалила адаптеры:
+```
+platanus_trim sub1.fastq sub2.fastq
+platanus_internal_trim mp1.fastq mp2.fastq
+```
+
+7. Удалила исходные файлы:
+```
+rm sub1.fastq 
+rm sub2.fastq
+rm mp1.fastq
+rm mp2.fastq
+```
+
+8. Оценила подрезанные чтения с помощью fastqc и multiqc:
+```
+mkdir fastqc_trimmed
+fastqc -o fastqc_trimmed sub1.fastq.trimmed
+fastqc -o fastqc_trimmed sub2.fastq.trimmed
+fastqc -o fastqc_trimmed mp1.fastq.int_trimmed
+fastqc -o fastqc_trimmed mp2.fastq.int_trimmed
+```
+```
+mkdir multiqc_trimmed
+multiqc -o multiqc_trimmed fastqc_trimmed
+```
+9. **Рассмотрим результаты работы fastqc и multiqc:**
+
+
+
 
 
 
