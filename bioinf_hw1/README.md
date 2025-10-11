@@ -207,6 +207,23 @@ rm sub1.fastq.trimmed sub2.fastq.trimmed mp1.fastq.int_trimmed mp2.fastq.int_tri
 Количество гэпов:  8
 Общая длина гэпов:  2225
 ```
+18. Бонусная часть
+```
+mkdir bonus #создание папки внутри bioinf_hw1
+cd bonus #переход в папку
+ln -s /usr/share/data-minor-bioinf/assembly/oil_R1.fastq #создание символической ссылки
+ln -s /usr/share/data-minor-bioinf/assembly/oil_R2.fastq
+ln -s /usr/share/data-minor-bioinf/assembly/oilMP_S4_L001_R1_001.fastq
+ln -s /usr/share/data-minor-bioinf/assembly/oilMP_S4_L001_R2_001.fastq
+```
+Случайным образом выбрала для paired-end 1 миллион чтений и для mate-pairs 0.5 миллиона чтений (seed = 729)
+```
+seqtk sample -s729 oil_R1.fastq 1000000 > sub1.fastq # перенаправляю в файл sub1.fastq
+seqtk sample -s729 oil_R2.fastq 1000000 > sub2.fastq
+seqtk sample -s729 oilMP_S4_L001_R1_001.fastq 500000 > mp1.fastq
+seqtk sample -s729 oilMP_S4_L001_R2_001.fastq 500000 > mp2.fastq
+```
+Выполняю все команды, аналогично основной части задания
 
 
 
