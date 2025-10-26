@@ -1,6 +1,6 @@
 **Домашнее задание 2**
 
-Ссылка на ноутбук: https://colab.research.google.com/drive/1YpjdLpJ038jAE-NOL5mf-8xTfF0ghpxq?usp=sharing
+Ссылка на ноутбук: https://colab.research.google.com/drive/1YpjdLpJ038jAE-NOL5mf-8xTfF0ghpxq?usp=sharing (также загружено в src)
 
 **Пороги для evalue и identity**
 
@@ -13,7 +13,7 @@
 - **identity**: 30%
 
 **Статистика**
-                                                        | Значение
+Описание                                                | Значение
 --------------------------------------------------------|--------------
 Предсказано генов                                       | 3607
 Удалось аннотировать с помощью сравнения с бактерией MIL-1 | 3181 
