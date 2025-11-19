@@ -1,6 +1,6 @@
 Ссылка на коллаб: https://colab.research.google.com/drive/1FgEto99DniOw6HL4zKjR2--Y8TamBppZ?usp=sharing (также загружено в src)
 
-**Результаты MultiQC**
+# **Результаты MultiQC**
 
 Общая статистика:
 <img width="1462" height="394" alt="image" src="https://github.com/user-attachments/assets/df312ecc-3ab2-4656-a8f1-c3db4e51bf8a" />
@@ -31,7 +31,7 @@
 Status:
 <img width="1473" height="758" alt="image" src="https://github.com/user-attachments/assets/7f4b44a9-44d1-4d82-9537-58fd75e8d5d2" />
 
-**Статистика**
+# **Статистика**
 ID | Тип образца | Общее кол-во исходных чтений | Кол-во и процент чтений, которые были успешно откартированы на геном | Кол-во и процент уникально откартированных чтений | Общее кол-во чтений, которые попали на гены
 -----------|-----------------------|-----------|-------------------|------------------|----------
 SRR3414629 | Перепрограммированный | 21106089 | 20865479 (98.86%) | 18573565 (88.00%) | 16224313
@@ -41,6 +41,30 @@ SRR3414635 | Контрольный | 20956475 | 20715475 (98.85%) | 18637053 (8
 SRR3414636 | Контрольный | 20307147 | 20073614 (98.85%) | 18032679 (88.80%) | 15942667
 SRR3414637 | Контрольный | 20385570 | 20149097 (98.84%) | 18043406 (88.51%) | 15914380
 
-**Бонус**
+# **Бонус**
+
+Тепловая карта:
+
+<img width="780" height="768" alt="image" src="https://github.com/user-attachments/assets/2e182da4-2015-4bec-87d6-6d23a1aecbc8" />
+
+Все контрольные образцы похожи между собой, а перепрограммированные образцы - между собой
+
+MA-plot:
+
+<img width="640" height="589" alt="image" src="https://github.com/user-attachments/assets/eff1ce65-cc0e-41c1-832f-b237d95f3178" />
+
+Тепловая карта для 20 самых экспрессированных генов:
+
+<img width="765" height="788" alt="image" src="https://github.com/user-attachments/assets/6c469a36-44ac-4e53-8fd3-c1743e36f971" />
+
+Графики со значениями "Normalized counts" в контрольных и перепрограммированных образцах для генов, которые наиболее поменяли экспрессию:
+
+<img width="755" height="750" alt="image" src="https://github.com/user-attachments/assets/9b39d3a4-2e58-4f5c-ba83-1909ccb7c815" />
+
+<img width="795" height="794" alt="image" src="https://github.com/user-attachments/assets/b828057b-a690-42fc-b8d8-14f32797c20e" />
+
+<img width="798" height="776" alt="image" src="https://github.com/user-attachments/assets/9d7ca7e6-d231-421d-8923-bb86ee927b85" />
+
+
 
 
