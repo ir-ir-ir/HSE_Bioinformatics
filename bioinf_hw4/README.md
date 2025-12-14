@@ -54,7 +54,7 @@ UMAP показывает более четкое разделение типо�
 
 ## Сравнение уровней экспрессии генов, полученных по scRNA-seq (подгруппа  mTEC-IV) с классическим bulk RNA-seq
 
-<img width="929" height="704" alt="image" src="https://github.com/user-attachments/assets/4f14c319-0fb8-4bbe-b863-eb49a5f5e362" />
+<img width="1134" height="853" alt="image" src="https://github.com/user-attachments/assets/8449df16-a6be-4b0f-bfde-9f81f797eb53" />
 
 <img width="1140" height="858" alt="image" src="https://github.com/user-attachments/assets/fbe07255-8b54-4a34-b1aa-8b6675091896" />
 
