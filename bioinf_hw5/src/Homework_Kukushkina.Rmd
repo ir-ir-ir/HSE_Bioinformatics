@@ -1,0 +1,529 @@
+Кукушкина	Ирина Романовна	1	Dat2	Param2
+
+# Часть 1. Определение таксономических единиц, их встречаемости и таксономии в образцах.
+
+##Библиотеки
+
+```{r}
+library(dada2)
+```
+
+```{r}
+library(phyloseq)
+```
+
+
+## Подготовка файлов
+  (Разархивировала вручную)
+```{r}
+path <- "C:/Users/milow/Desktop/Bioinformatics/data base/Dat2-20260224T122102Z-1-001/Dat2_fixed"
+list.files(path)
+```
+
+```{r}
+fnFs <- sort(list.files(path, pattern=".R1.fastq$",full.names = TRUE)) #пути к Forward file names 
+fnRs <- sort(list.files(path, pattern=".R2.fastq$",full.names = TRUE)) # пути к Reverse file names
+
+#сокращенные названия
+sample.names <- sapply(strsplit(basename(fnFs),"_"), '[',1)
+print(sample.names)
+```
+
+```{r}
+table(nchar(getSequences(fnFs[1])))
+```
+```{r}
+table(nchar(getSequences(fnRs[1])))
+```
+
+
+## Контроль качества 
+
+```{r}
+plotQualityProfile(fnFs[1:10]) # F - forward
+plotQualityProfile(fnRs[1:10]) # R - reverse
+```
+На концах качество ухудшается
+
+```{r}
+#названия для отфильтрованных файлов
+filtFs <- file.path(path,"filtered", paste0(sample.names, "_F_filt.fastq.gz"))
+filtRs <- file.path(path,"filtered", paste0(sample.names, "_R_filt.fastq.gz"))
+
+names(filtFs) <- sample.names
+names(filtRs) <- sample.names
+
+#фильрация по качеству (maxEE - максимальная ошибка в прочтении = 1) и обрезка по длине (truncLen = (135,130))
+out <- filterAndTrim(fnFs, filtFs, fnRs, filtRs, truncLen = c(135,130),
+                     maxEE=c(1,1), maxN = 0, truncQ = 2, rm.phix = TRUE,
+                     compress = T)
+```
+
+
+```{r}
+#сколько чтений осталось после filterAndTrim
+head(out)
+```
+
+```{r}
+plotQualityProfile(filtFs[1:10]) 
+plotQualityProfile(filtRs[1:10]) 
+```
+
+Качество стало лучше
+
+## Рассчет ошибки секвенирования
+
+```{r}
+#обучение модели, считающей ошибку (какой нуклеотид на какой чаще всего заменялся)
+errF <- learnErrors(filtFs)
+errR <- learnErrors(filtRs)
+
+#построение графиков
+plotErrors(errF, nominalQ = T)
+plotErrors(errR, nominalQ = T)
+```
+
+```{r}
+#перезаписываю файлы с учетом посчитавшейся ошибки
+dadaFs <- dada(filtFs, err=errF)
+dadaRs <- dada(filtRs, err=errR)
+```
+
+## Объединение прочтений
+```{r}
+mergers <- mergePairs(dadaFs, filtFs, dadaRs,filtRs, verbose=T, minOverlap = 9)
+```
+
+
+##Таблица последовательностей
+```{r}
+#таблица последовательностей (ASV)
+seqtab <- makeSequenceTable(mergers)
+#размер таблицы
+dim(seqtab)
+#распределение длин полученных ASV
+table(nchar(getSequences(seqtab)))
+
+```
+
+
+## Удаление химер
+
+```{r}
+#удаление
+seqtab.nochim <- removeBimeraDenovo(seqtab, method = "consensus", verbose = T)
+#размер таблицы
+dim(seqtab.nochim)
+#распределение длин
+table(nchar(getSequences(seqtab.nochim)))
+```
+
+##Таблица со статистикой
+
+```{r}
+#функция для подсчета последовательностей
+getN <- function(x) sum(getUniques(x)) 
+#объединение данных со всех выполненных этапов в одну таблицу
+track <- cbind(out, sapply(dadaFs, getN), sapply(dadaRs, getN), sapply(mergers, getN), rowSums(seqtab.nochim))
+colnames(track) <- c("input", "filtered", "denosiseF","denosiseR", "merged","nochim")
+rownames(track) <- sample.names
+track
+```
+```{r}
+print(mean(rowSums(seqtab.nochim > 0)))
+```
+
+##Таксономическая классификация ASV
+
+```{r}
+#база данных
+taxa <- assignTaxonomy(seqtab.nochim, "C:/Users/milow/Desktop/Bioinformatics/data base/Database-20260129T081544Z-3-001/Database/silva_nr99_v138.1_train_set.fa.gz")
+```
+
+```{r}
+print(taxa)
+```
+
+
+```{r}
+#преобразование в дата фрейм
+short_asv <- paste0(substr(rownames(taxa), 1, 10),"...")
+df_taxa <- data.frame(ASV = short_asv,taxa,row.names = NULL)
+df_taxa
+
+```
+
+## unclussify родов в данных
+
+```{r}
+sum(is.na(df_taxa$Genus)) #количество NA
+nrow(df_taxa) #всего строк
+mean(is.na(df_taxa$Genus)) * 100 #процент
+```
+
+## Определение среды
+
+```{r}
+head(sort(table(df_taxa$Genus, useNA = "always"), decreasing = TRUE),15)
+```
+
+
+Fibrobacter - в рубце жвачных животных
+Rikenellaceae RC9 gut group - в кишечнике животных, в том числе коз и лошадей
+Christensenellaceae R-7 - одно из доминирующих родов в образцах рубца
+NK4A214 — бактерия рубца
+
+Таким образом, образцы, скорее всего, взяты из желудка (рубца) жвачного животного (например, коза/лошадь/корова)
+
+## Создание phyloseq объекта
+
+```{r}
+#otu_table
+otu <- data.frame(seqtab.nochim)
+colnames(otu) <- paste0("sp", 1:ncol(otu))
+otu_tab <- otu_table(otu, taxa_are_rows = F)
+```
+
+```{r}
+print(otu_tab)
+```
+
+
+```{r}
+#tax_table
+tax <- as.matrix(taxa)
+rownames(tax) <- paste0("sp", 1:nrow(tax))
+tax_tab <- tax_table(tax)
+```
+
+
+```{r}
+print(tax_tab)
+```
+
+
+```{r}
+sam_dat <- read.csv("C:/Users/milow/Desktop/Bioinformatics/data base/Dat2-20260224T122102Z-1-001/Dat2_metadata.csv") 
+
+sam_dat <- sam_dat[1:14, ] #оставляю только уникальные записи
+
+rownames(sam_dat) <- sam_dat$X #устанавливаю названия строк
+rownames(sam_dat) <- gsub(".gz", "", rownames(sam_dat)) #убираю .gz из названий
+
+sam_dat$X <- NULL #удаляю дублюрующий столбец, из которого сделала названия
+
+print(sam_dat)      
+```
+
+```{r}
+sam_da <- sample_data(sam_dat)
+sam_da
+```
+
+```{r}
+#создание phyloseq-объекта
+phy <- phyloseq(otu_tab, tax_tab, sam_da)
+#сохранение
+saveRDS(phy, "hw_dat_raw.RDS")
+
+readRDS("hw_dat_raw.RDS")
+```
+
+```{r}
+print(tax_table(phy))
+```
+
+```{r}
+#дата фрейм из таблицы таксономии
+tax_df <- as.data.frame(tax_table(phy))
+
+
+sum(is.na(tax_df$Genus)) #количество NA
+nrow(tax_df) #всего строк
+mean(is.na(tax_df$Genus)) * 100 #процент
+```
+
+```{r}
+print(phy)
+print("---")
+readRDS("hw_dat_raw.RDS")
+```
+
+
+# Часть 2.  Анализ полученных данных. Анализ представленности таксонов в образцах. Альфа-разнообразие. Бета-разнообразие. 
+
+## Библиотеки
+```{r}
+library(phyloseq)
+```
+
+```{r}
+library(microbiome)
+```
+
+```{r}
+library(ggplot2)
+```
+
+```{r}
+options(repos = c(CRAN = "https://cran.uni-muenster.de/")) #зеркало
+
+install.packages("pheatmap")
+library(pheatmap)
+```
+
+
+```{r}
+install.packages("dplyr")
+library(dplyr)
+```
+
+```{r}
+options(repos = c(CRAN = "https://cran.uni-muenster.de/")) #зеркало
+install.packages("vegan")
+library("vegan")
+```
+
+
+
+##Выбор наиболее представленных таксонов
+```{r}
+colnames(phy@tax_table) #названия колонок
+genus <- tax_glom(phy,"Genus") #объединение таксономических единиц на уровне рода
+```
+
+
+```{r}
+#результаты объединения 
+print(phy)
+print("---")
+print(genus)
+```
+
+Далее надо выбрать наиболее представленные рода из таблицы. Наиболее представленными считаем те рода, которые присутствовали хотя бы в половине образцов и хотя бы в одном образце были представлены 5%.
+значит detection = 5/100 (5%), prevalence = 50/100 (половина образцов)
+```{r}
+taxa1 <- core_members(genus, detection = 5/100, prevalence = 50/100)
+fin.phy <- prune_taxa(taxa1, genus)
+```
+
+
+```{r}
+#результаты фильтрации
+print(phy)
+print("---")
+print(fin.phy)
+```
+
+
+```{r}
+saveRDS(fin.phy, "high_presented_genuses.RDS")
+readRDS("high_presented_genuses.RDS")
+```
+
+## Графики
+
+```{r}
+dat <- data.frame(fin.phy@otu_table) #таблица только с бактериями, которые присутствовали в большом кол-ве
+colnames(dat) <- fin.phy@tax_table[,6] #названия бактерий берем из tax_table
+dat
+```
+
+```{r}
+dat$names <- rownames(dat) #названия строк
+long_dat <- reshape::melt(dat) #формат для ggplot2
+```
+
+```{r}
+#представленные рода
+genera_present <- colnames(dat)[1:(ncol(dat)-1)]  #все колонки кроме names
+genera_present
+```
+
+
+```{r}
+my_colors <- c(
+  "#1F77B4", "#FF7F0E", "#2CA02C", "#D62728", "#9467BD", "#8C564B", "#E377C2", "#7F7F7F",
+  "#BCBD22", "#17BECF", "#AEC7E8", "#FFBB78", "#98DF8A", "#FF9896", "#C5B0D5", "#C49C94",
+  "#F7B6D2", "#C7C7C7", "#DBDB8D", "#9EDAE5", "#393B79", "#637939", "#8C6D31", "#843C39",
+  "#7B4173", "#5254A3", "#8CA252", "#BD9E39", "#AD494A", "#A55194", "#6B6ECF", "#B5CF6B",
+  "#E7BA52", "#D6616B", "#BD9E39", "#9C9EDE", "#CEDB9C", "#E6AB02", "#A6761D", "#1B9E77",
+  "#D95F02", "#7570B3", "#E7298A", "#66A61E", "#E6AB02", "#A6761D", "#666666", "#E41A1C",
+  "#377EB8", "#4DAF4A", "#984EA3", "#FF7F00", "#FFFF33", "#A65628", "#F781BF", "#999999"
+)
+```
+
+
+###Geom_bar
+
+```{r}
+plot <- ggplot(long_dat, aes(x = value, y = names)) + 
+  geom_bar(aes(fill=variable), stat="identity", position = "fill") +
+  scale_fill_manual(values = my_colors) + 
+  labs(title = "Относительная численность родов в образцах")
+plot
+```
+
+```{r, echo=FALSE}
+knitr::include_graphics("C:/Users/milow/Downloads/image (4).png")
+```
+### Трансформация clr и pheatmap
+
+```{r}
+#clr
+
+#превращаю в матрицу, так как с дата фрейм ошибка
+dat_matrix <- as.matrix(dat[, !colnames(dat) %in% "names"])
+rownames(dat_matrix) <- dat$names
+#transform
+dat_clr <- microbiome::transform(dat_matrix, "clr")
+dat_clr <- data.frame(dat_clr)
+```
+
+```{r}
+dat_clr <- data.frame(t(dat_clr))
+#убираю X из начала названий колонок
+colnames(dat_clr) <- gsub("^X", "", colnames(dat_clr))
+print(dat_clr)
+```
+
+
+```{r}
+#аннотация по #Param2
+annotation_col <- data.frame(
+  Group = sam_da$Param2  
+)
+
+#имена строк из sam_da
+rownames(annotation_col) <- rownames(sam_da)
+```
+
+
+```{r}
+my_heatmap_colors <- colorRampPalette(c( "#984EA3", "#FF7F00", "#FFFF33"))(100)
+group_colors <- c("Variable1" = "#D62728",    
+                  "Variable2" = "#9467BD")    
+
+pheatmap(dat_clr, 
+         annotation_col = annotation_col,  
+         annotation_colors = list(Group = group_colors),
+         color = my_heatmap_colors,
+         main = "Тепловая карта clr-трансформированных данных", 
+         fontsize_row = 6, fontsize_col = 6)     
+```
+
+
+```{r, echo=FALSE}
+knitr::include_graphics("C:/Users/milow/Downloads/Снимок экрана 2026-03-04 115215.png")
+```
+
+##Альфа-разнообразие
+
+```{r}
+simp <- vegan::diversity (dat[, !colnames(dat) %in% "names"], index = "simpson")
+
+shan <- vegan::diversity (dat[, !colnames(dat) %in% "names"], index = "shannon")
+
+invsimp <-vegan::diversity (dat[, !colnames(dat) %in% "names"], index = "inv")
+
+observed <- rowSums(dat[, !colnames(dat) %in% "names"] > 0)
+names(observed) <- dat$names
+
+```
+
+
+```{r}
+alpha <- data.frame(simp, shan, invsimp, observed, sam_dat)
+alpha
+```
+
+```{r}
+#long формат
+alpha_long <- reshape2::melt(alpha)
+alpha_long
+```
+
+```{r}
+ggplot(alpha_long, aes(x=Param2, y=value, color = Param2, fill = Param2))+
+  geom_boxplot(outlier.shape = NA, alpha = 0.5)+
+  facet_wrap(. ~ variable, scales = "free", ncol = 1, strip.position = "right")+
+  scale_color_manual(values = my_colors)+
+  scale_fill_manual(values = my_colors)+
+  labs(title = "Альфа-разнообразие по коэффициентам Observed, Shannon, Simpson, Invsimpson\nв связи с параметром Param2")
+```
+## Статистический тест для альфа-разнообразия
+
+```{r}
+#группы
+group1 <- alpha[alpha$Param2 == "Variable1", ]
+group2 <- alpha[alpha$Param2 == "Variable2", ]
+
+#Wilcoxon test для каждого индекса
+for(metric in c("observed", "shan", "simp", "invsimp")) {
+  cat("\nТест Уилкоксона для", metric )
+  result <- wilcox.test(alpha[[metric]] ~ alpha$Param2)
+  significant <- ifelse(result$p.value < 0.05, "Yes", "No")
+  cat("W =", result$statistic, "p_value =", result$p.value, "Significant =", significant)
+}
+
+#значения по группам для контекста
+means <- aggregate(. ~ Param2, data = alpha[, c("observed", "shan", "simp", "invsimp", "Param2")], mean)
+
+cat("\nСредние значения индексов по группам\n")
+print(as.matrix(means))
+```
+
+
+## Бета-разнообразие
+
+```{r}
+#дистанции Брея-Кертиса
+distance <- phyloseq::distance(fin.phy, method = "bray")
+meta <- data.frame(sam_dat)
+```
+
+```{r}
+#статистические тесты
+permutest(betadisper(distance,meta$Param2))                
+adonis2(distance~Param2, meta)
+```
+
+
+```{r}
+pheatmap(distance, color = my_heatmap_colors,
+         annotation_col = annotation_col,
+         annotation_colors = list(Group = group_colors),
+         main = "Тепловая карта расстояний Брея-Кёртиса",
+         labels_col = rownames(annotation_col))
+```
+
+
+```{r, echo=FALSE}
+knitr::include_graphics("C:/Users/milow/Downloads/Снимок экрана 2026-03-04 194347.png")
+```
+
+
+```{r}
+#PCoA
+ord <- ordinate(fin.phy, method = "PCoA", distance = "bray")
+plot_ord <- plot_ordination(fin.phy, ord, color = "Param2")+
+  stat_ellipse(geom = "polygon", alpha = 0.01, level = 0.5) + 
+  scale_color_manual(values = my_colors)+
+  scale_fill_manual(values = my_colors)+
+  labs(title = "PCoA на основе расстояния Брея-Кёртиса")
+plot_ord
+```
+
+```{r, echo=FALSE}
+knitr::include_graphics("C:/Users/milow/Downloads/Снимок экрана 2026-03-04 120526.png")
+```
+
+
+
+
+
+
+
+
+
