@@ -26,3 +26,10 @@
 |SRR3824222_1_bismark_bt2_pe (Epiblast) |1344               |565               |
 |SRR5836473_1_bismark_bt2_pe (8 Cell)|551                |194               |
 |SRR5836475_1_bismark_bt2_pe (ICM)|797                |274               |
+
+
+Total count of deduplicated leftover sequences: 6846444 (97.09% of total)
+
+Total count of deduplicated leftover sequences: 2335658 (81.72% of total)
+
+Total count of deduplicated leftover sequences: 3791973 (90.93% of total)
