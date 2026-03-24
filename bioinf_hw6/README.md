@@ -118,7 +118,8 @@ plot_methylation_histogram('SRR3824222_1_dedup.deduplicated.bismark.cov.gz', 'Ep
 <img width="864" height="573" alt="image" src="https://github.com/user-attachments/assets/771f1b94-706b-4357-9260-b2ace9e68f71" />
 <img width="894" height="561" alt="image" src="https://github.com/user-attachments/assets/7e942858-fdb3-4c13-9398-c057f0cdf5d6" />
 
- 
+ Для надежности данных был выбран порог покрытия = 10, при этом абсолютное количество ридов достаточно для анализа.
+ На графиках видна четкая тенденция: уровень метилирования снижается к стадии ICM, затем возрастает к стадии Epiblast, что подтверждает результаты исходного исследования. 
 
 
 
