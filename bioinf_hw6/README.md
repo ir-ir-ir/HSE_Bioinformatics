@@ -161,12 +161,30 @@ plot_methylation_histogram('SRR3824222_1_dedup.deduplicated.bismark.cov.gz', 'Ep
 
 ## В промоторы каких генов попадают DMR
 
+Примеры генов: 1700007J10Rik, Smim23, Krtap3-2, 1700012H19Rik, Suz12
 
+*Файл genes.txt загружен в папку data*
 
+## Go-анализ через gprofiler
 
+Найдено 163 значимых GO терминов
 
+топ 10 терминов:
 
+|      | name | p_value | intersection_size |
+|------|-----------|---------|------------------|
+| 1 | localization | 1.64e-20 | 395 |
+| 2 | transport | 8.19e-17 | 329 |
+| 3 | establishment of localization | 1.56e-16 | 345 |
+| 4 | organelle organization | 2.09e-15 | 274 |
+| 5 | positive regulation of cellular process | 7.07e-13 | 408 |
+| 6 | developmental process | 1.72e-12 | 447 |
+| 7 | anatomical structure development | 1.77e-12 | 416 |
+| 8 | positive regulation of metabolic process | 4.23e-12 | 262 |
+| 9 | positive regulation of biological process | 4.34e-12 | 423 |
+| 10 | positive regulation of macromolecule metabolic process | 1.12e-11 | 242 |
 
+*Файл c результатом Go загружен в папку data*
 
 
 
